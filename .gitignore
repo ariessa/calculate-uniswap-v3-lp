@@ -1,0 +1,15 @@
+# node_modules
+node_modules/
+
+# DS_Store
+**/.DS_Store
+
+# test coverage
+coverage/
+
+# Hardhat compilation files
+artifacts/
+cache/
+
+# VSCode settings
+.vscode/
