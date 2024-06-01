@@ -2,6 +2,8 @@
 
 <p>Pull and calculate the value of liquidity pool (LP) tokens in Uniswap V3.</p>
 
+> "Just as unicorns are legendary beings, so too is flawless code." - Unknown
+
 <br />
 
 ## How to use this repo
