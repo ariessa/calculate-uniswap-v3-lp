@@ -13,3 +13,6 @@ cache/
 
 # VSCode settings
 .vscode/
+
+# Environment variable files
+.env
