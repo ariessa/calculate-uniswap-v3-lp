@@ -2,6 +2,8 @@
 
 <p>Pull and calculate the value of liquidity pool (LP) tokens in Uniswap V3.</p>
 
+<br />
+
 > "Just as unicorns are legendary beings, so too is flawless code." - Unknown
 
 <br />
@@ -26,6 +28,22 @@
 
     ```
     npm run
+    ```
+
+<br />
+
+### How to set up contract `UniswapV3LPAddresses` on Sepolia testnet
+
+1. Compile and deploy the contract on Sepolia testnet.
+
+    ```
+    npm run deploy
+    ```
+
+2. Populate data from contract `UniswapV3Factory` on Ethereum mainnet into contract `UniswapV3LPAddresses` on Sepolia testnet.
+
+    ```
+    npm run populate
     ```
 
 <br />
