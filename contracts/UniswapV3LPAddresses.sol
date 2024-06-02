@@ -27,7 +27,7 @@ contract UniswapV3LPAddresses is AccessControl {
     // Addresses of liquidity pools
     address[] private liquidity_pool_addresses;
 
-    // Last processed block in mainnet with status finalised
+    // Last processed block in mainnet with status finalized
     uint256 private last_block;
 
     // Role identifier for the LP_MANAGER role
@@ -107,28 +107,6 @@ contract UniswapV3LPAddresses is AccessControl {
                         emit PoolAdded(token_0, token_1, fee[i], lp_address[i]);
                     }
             }
-        }
-    }
-
-    /**
-     * @dev Removes a liquidity pool.
-     * @param lp_address The address of the liquidity pool.
-     */
-    function remove_liquidity_pool(
-        address lp_address
-    ) public onlyRole(LP_MANAGER_ROLE) {
-        delete liquidity_pools[lp_address];
-    }
-
-    /**
-     * @dev Removes multiple liquidity pool.
-     * @param lp_address The addresses of the liquidity pool.
-     */
-    function batch_remove_liquidity_pool(
-        address[] memory lp_address
-    ) public onlyRole(LP_MANAGER_ROLE) {
-        for (uint256 i = 0; i < lp_address.length; i++) {
-            delete liquidity_pools[lp_address[i]];
         }
     }
 
