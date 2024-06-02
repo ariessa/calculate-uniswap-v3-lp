@@ -4,8 +4,8 @@
   "description": "Pull and calculate the value of liquidity pool (LP) tokens in Uniswap V3",
   "main": "index.js",
   "scripts": {
-    "compile": "npx hardhat compile",
-    "deploy": "npx hardhat compile && npx hardhat run scripts/deploy.js --network sepolia",
+    "compile": "npx hardhat clean && npx hardhat compile",
+    "deploy": "npx hardhat clean && npx hardhat compile && npx hardhat run scripts/deploy.js --network sepolia",
     "populate": "node scripts/populate_data.js",
     "start": "node index.js",
     "test": "jest --verbose",
