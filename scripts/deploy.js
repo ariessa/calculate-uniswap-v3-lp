@@ -7,7 +7,7 @@ async function main() {
     const contract = await UniswapV3LPAddresses.deploy(last_block);
 
     // Update value in .env file
-    utils.update_contract_address('CONTRACT_ADDRESS=', `CONTRACT_ADDRESS="${contract.target}"`);
+    utils.update_contract_address('UNISWAP_V3_LP_ADDRESSES_ADDRESS=', `UNISWAP_V3_LP_ADDRESSES_ADDRESS="${contract.target}"`);
 
     // Create abi file for contract UniswapV3LPAddresses
     utils.create_abi();
