@@ -1,13 +1,35 @@
-// TODO: Create an API endpoint to expose the LP value calculation functionality.
-// TODO: Allow users to input the LP token address and wallet address
-// TODO: Define the response format to include the calculated LP token value. 
-// Sample API result
-// {
-//     "token0" : "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-//     "token1" : "0xfAbA6f8e4a5E8Ab82F62fe7C39859FA577269BE3",
-//     "token0_value" : "1310550000000000000000",
-//     "token1_value" : "113000000000000000",
-//     "token0_fees" : "11000000000000000",
-//     "token1_fees" : "1100000000000",
-// }
-// TODO: Implement appropriate error handling and response status codes.
+const express = require('express');
+const constants = require("./lib/constants");
+const liquidity_pool = require("./lib/liquidity_pool");
+
+const app = express();
+const port = constants.APP_PORT;
+
+app.use(express.json());
+
+app.post('/api/calculate_lp', async (req, res) => {
+    const { lp_address, wallet_address } = req.body;
+
+    // Check if lp_address and wallet_address are provided
+    if (!lp_address || !wallet_address) {
+        return res.status(400).json({ error: 'LP address and wallet address are required' });
+    }
+
+    try {
+        const calc_result = await liquidity_pool.calculate_lp(lp_address, wallet_address);
+
+        // Check if calc_result is a valid result
+        if (calc_result === null || typeof calc_result === 'undefined') {
+            return res.status(422).json({ error: 'Invalid result from calculate_lp function' });
+        }
+
+        return res.status(200).json({ message: 'Calculated LP token successfully', data: { calc_result }});
+    } catch(e) {
+        return res.status(422).json({ error: e });
+    }
+});
+
+// Start the server
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+});
