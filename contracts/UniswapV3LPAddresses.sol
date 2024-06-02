@@ -24,6 +24,9 @@ contract UniswapV3LPAddresses is AccessControl {
     // Mapping to store liquidity pools
     mapping(address => Liquidity_Pool) public liquidity_pools;
 
+    // Addresses of liquidity pools
+    address[] private liquidity_pool_addresses;
+
     // Last processed block in mainnet with status finalised
     uint256 private last_block;
 
@@ -42,8 +45,8 @@ contract UniswapV3LPAddresses is AccessControl {
         address pool
     );
 
-    constructor(uint256 _last_block) {
-        last_block = _last_block;
+    constructor(uint256 starting_block) {
+        _set_last_block(starting_block);
         _grantRole(LP_MANAGER_ROLE, msg.sender);
     }
 
@@ -67,6 +70,7 @@ contract UniswapV3LPAddresses is AccessControl {
         require(token_0 != address(0), "First token address is a zero or null address!");
         require(liquidity_pools[lp_address].exist == false, "Liquidity pool already exists!");
         liquidity_pools[lp_address] = Liquidity_Pool(token_0, token_1, fee, true);
+        liquidity_pool_addresses.push(lp_address);
         _set_last_block(block_number);
         emit PoolAdded(token_0, token_1, fee, lp_address);
     }
@@ -96,9 +100,9 @@ contract UniswapV3LPAddresses is AccessControl {
         for (uint256 i = 0; i < lp_address.length; i++) {
             if(token_a[i] != token_b[i]) {
                     (address token_0, address token_1) = token_a[i] < token_b[i] ? (token_a[i], token_b[i]) : (token_b[i], token_a[i]);
-
                     if (token_0 != address(0) && liquidity_pools[lp_address[i]].exist == false) {
                         liquidity_pools[lp_address[i]] = Liquidity_Pool(token_0, token_1, fee[i], true);
+                        liquidity_pool_addresses.push(lp_address[i]);
                         _set_last_block(block_number);
                         emit PoolAdded(token_0, token_1, fee[i], lp_address[i]);
                     }
@@ -114,6 +118,18 @@ contract UniswapV3LPAddresses is AccessControl {
         address lp_address
     ) public onlyRole(LP_MANAGER_ROLE) {
         delete liquidity_pools[lp_address];
+    }
+
+    /**
+     * @dev Removes multiple liquidity pool.
+     * @param lp_address The addresses of the liquidity pool.
+     */
+    function batch_remove_liquidity_pool(
+        address[] memory lp_address
+    ) public onlyRole(LP_MANAGER_ROLE) {
+        for (uint256 i = 0; i < lp_address.length; i++) {
+            delete liquidity_pools[lp_address[i]];
+        }
     }
 
     /**
@@ -144,5 +160,13 @@ contract UniswapV3LPAddresses is AccessControl {
      */
     function get_last_block() public view returns (uint256) {
         return last_block;
+    }
+
+    /**
+     * @dev Gets the value of last processed block in mainnet with status finalised.
+     * @return address[] The addresses of liquidity pools.
+     */
+    function get_liquidity_pool_addresses() public view returns (address[] memory) {
+        return liquidity_pool_addresses;
     }
 }
