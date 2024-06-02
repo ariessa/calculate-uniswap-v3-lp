@@ -9,7 +9,7 @@ const { ethers } = require("ethers");
  * Else, it will filter event logs starting from the last processed block.
  */
 async function populate_data() {   
-    const contract = new ethers.Contract(constants.UNISWAP_V3_FACTORY_ADDRESS, constants.UNISWAP_V3_LP_ADDRESSES_EVENT, constants.MAINNET_PROVIDER);
+    const contract = new ethers.Contract(constants.UNISWAP_V3_FACTORY_ADDRESS, constants.UNISWAP_V3_FACTORY_EVENT_POOL_CREATED, constants.MAINNET_PROVIDER);
     const filter = contract.filters.PoolCreated;
     const last_finalised_block = await utils.get_last_finalised_block();
     const last_processed_block = await utils.get_last_processed_block();
