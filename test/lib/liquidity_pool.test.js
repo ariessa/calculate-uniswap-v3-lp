@@ -1,5 +1,5 @@
-const liquidity_pool = require('../lib/liquidity_pool');
-const constants = require("../lib/constants");
+const liquidity_pool = require('../../lib/liquidity_pool');
+const constants = require("../../lib/constants");
 
 describe("function calculate_lp", () => {
     test("returns error if liquidity pool's address is invalid", async () => {
