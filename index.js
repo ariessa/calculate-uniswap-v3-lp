@@ -10,16 +10,22 @@ app.use(express.json());
 app.post('/api/calculate_lp', async (req, res) => {
     const { lp_address, wallet_address } = req.body;
 
-    // Check if lp_address and wallet_address are provided
-    if (!lp_address || !wallet_address) {
+    // Validate request body
+    if (!lp_address) {
+        return res.status(400).json({ error: 'LP address is required' });
+    }
+
+    if (!wallet_address) {
+        return res.status(400).json({ error: 'Wallet address is required' });
+    }
+
+    if (!lp_address && !wallet_address) {
         return res.status(400).json({ error: 'LP address and wallet address are required' });
     }
 
     try {
         const calc_result = await liquidity_pool.calculate_lp(lp_address, wallet_address);
-
         // TODO: Debug function calculate_lp
-
         console.log("calc: ", await calc_result);
 
         // Check if calc_result is a valid result
