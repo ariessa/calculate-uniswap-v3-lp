@@ -219,9 +219,9 @@
         "type": "uint24[]"
       },
       {
-        "internalType": "uint256[]",
+        "internalType": "uint256",
         "name": "block_number",
-        "type": "uint256[]"
+        "type": "uint256"
       }
     ],
     "name": "batch_add_liquidity_pool",
@@ -303,6 +303,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "get_liquidity_pool_addresses",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -376,19 +389,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "lp_address",
-        "type": "address"
-      }
-    ],
-    "name": "remove_liquidity_pool",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

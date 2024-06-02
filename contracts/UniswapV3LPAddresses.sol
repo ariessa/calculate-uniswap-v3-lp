@@ -9,35 +9,37 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
  *      It allows users to add and remove liquidity pool, as well as get the details of a liquidity pool.
  */
 contract UniswapV3LPAddresses is AccessControl {
-    // Struct to represent liquidity pool
+    /** Struct to represent liquidity pool */ 
     struct Liquidity_Pool {
-        // The address of the first token
+        /** The address of the first token */
         address token_0;
-        // The address of the second token
+        /** The address of the second token */
         address token_1;
-        // The fee of the liquidity pool
+        /** The fee of the liquidity pool */
         uint24 fee;
-        // The flag to indicate whether the liquidity pool exists or not
+        /** The flag to indicate whether the liquidity pool exists or not */
         bool exist;
     }
 
-    // Mapping to store liquidity pools
+    /** Mapping to store liquidity pools */
     mapping(address => Liquidity_Pool) public liquidity_pools;
 
-    // Addresses of liquidity pools
+    /** Addresses of liquidity pools */
     address[] private liquidity_pool_addresses;
 
-    // Last processed block in mainnet with status finalized
+    /** Last processed block in mainnet with status finalized */
     uint256 private last_block;
 
-    // Role identifier for the LP_MANAGER role
+    /** Role identifier for the LP_MANAGER role */
     bytes32 public constant LP_MANAGER_ROLE = keccak256("LP_MANAGER_ROLE");
 
-    /// @notice Emitted when a pool is added
-    /// @param token_0 The first token of the pool by address sort order
-    /// @param token_1 The second token of the pool by address sort order
-    /// @param fee The fee collected upon every swap in the pool, denominated in hundredths of a bip
-    /// @param pool The address of the added pool
+    /**
+     * @notice Emitted when a pool is added.
+     * @param token_0 The first token of the pool by address sort order.
+     * @param token_1 The second token of the pool by address sort order.
+     * @param fee The fee collected upon every swap in the pool, denominated in hundredths of a bip.
+     * @param pool The address of the added pool.
+     */ 
     event PoolAdded(
         address indexed token_0,
         address indexed token_1,
@@ -45,8 +47,12 @@ contract UniswapV3LPAddresses is AccessControl {
         address pool
     );
 
-    constructor(uint256 starting_block) {
-        _set_last_block(starting_block);
+    /** 
+     * @dev Constructor function.
+     * @param _last_block The last processed block in mainnet with status finalized.
+     */
+    constructor(uint256 _last_block) {
+        last_block = _last_block;
         _grantRole(LP_MANAGER_ROLE, msg.sender);
     }
 
@@ -123,8 +129,8 @@ contract UniswapV3LPAddresses is AccessControl {
     }
 
     /**
-     * @dev Sets the value of last processed block in mainnet with status finalised.
-     * @param block_number The new block number in mainnet with status finalised.
+     * @dev Sets the value of last processed block in mainnet with status finalized.
+     * @param block_number The new block number in mainnet with status finalized.
      */
     function _set_last_block(uint256 block_number) internal onlyRole(LP_MANAGER_ROLE) {
         require(block_number != 0, "New block number cannot be zero!");
@@ -133,15 +139,15 @@ contract UniswapV3LPAddresses is AccessControl {
     }
 
     /**
-     * @dev Gets the value of last processed block in mainnet with status finalised.
-     * @return uint256 The value of last processed block in mainnet with status finalised.
+     * @dev Gets the value of last processed block in mainnet with status finalized.
+     * @return uint256 The value of last processed block in mainnet with status finalized.
      */
     function get_last_block() public view returns (uint256) {
         return last_block;
     }
 
     /**
-     * @dev Gets the value of last processed block in mainnet with status finalised.
+     * @dev Gets the value of last processed block in mainnet with status finalized.
      * @return address[] The addresses of liquidity pools.
      */
     function get_liquidity_pool_addresses() public view returns (address[] memory) {
