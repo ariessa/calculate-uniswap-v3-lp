@@ -109,11 +109,12 @@ contract UniswapV3LPAddresses is AccessControl {
                     if (token_0 != address(0) && liquidity_pools[lp_address[i]].exist == false) {
                         liquidity_pools[lp_address[i]] = Liquidity_Pool(token_0, token_1, fee[i], true);
                         liquidity_pool_addresses.push(lp_address[i]);
-                        _set_last_block(block_number);
                         emit PoolAdded(token_0, token_1, fee[i], lp_address[i]);
                     }
             }
         }
+
+        _set_last_block(block_number);
     }
 
     /**
