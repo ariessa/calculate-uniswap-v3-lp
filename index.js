@@ -7,6 +7,17 @@ const port = constants.APP_PORT;
 
 app.use(express.json());
 
+// Catch-all middleware for non-existent endpoints
+app.use((req, res, next) => {
+    res.status(404).json({ error: 'Endpoint not found' });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Internal server error' });
+});
+
 app.post('/api/calculate_lp', async (req, res) => {
     const { lp_address, wallet_address } = req.body;
 
