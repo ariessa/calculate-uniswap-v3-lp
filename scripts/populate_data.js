@@ -1,7 +1,6 @@
 const utils = require("../lib/utils");
-const env = require("../constants/env");
+const constants = require("../lib/constants");
 const { ethers } = require("ethers");
-const { mainnet_provider } = require("../constants/providers");
 
 /**
  * Process 5000 blocks then sleep for 2 seconds.
@@ -11,7 +10,7 @@ const { mainnet_provider } = require("../constants/providers");
  */
 async function populate_data() {   
     const contractABI = ["event PoolCreated(address indexed token0, address indexed token1, uint24 indexed fee, int24 tickSpacing, address pool)"];
-    const contract = new ethers.Contract(env.UNISWAP_V3_FACTORY_ADDRESS, contractABI, mainnet_provider);
+    const contract = new ethers.Contract(constants.UNISWAP_V3_FACTORY_ADDRESS, contractABI, constants.mainnet_provider);
     const filter = contract.filters.PoolCreated;
     const last_finalised_block = await utils.get_last_finalised_block();
     const last_processed_block = await utils.get_last_processed_block();
