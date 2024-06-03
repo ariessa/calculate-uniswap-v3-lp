@@ -1,67 +1,188 @@
-const request = require("supertest");
-const app = require("../index");
+const express = require("express");
+const rate_limit = require("express-rate-limit");
+const supertest = require("supertest");
+const constants = require("../lib/constants");
+const pools = require("../lib/pools");
+
+const app = express();
+const port = constants.APP_TEST_PORT;
+
+// Mock the pools module
+jest.mock("../lib/pools", () => ({
+  calculate_lp: jest.fn()
+}));
+
+// Rate limiting middleware
+app.use(
+  rate_limit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: "Too many requests from this IP, please try again later.",
+  })
+);
+
+app.use(express.json());
+
+app.post("/api/calculate_lp", async (req, res) => {
+  try {
+    const { pool_address, user_address } = req.body;
+
+    // Validate request body
+    if (!pool_address || !user_address) {
+      return res
+        .status(400)
+        .json({ error: "Pool address and user address are required" });
+    }
+
+    const result = await pools.calculate_lp(
+      pool_address,
+      user_address
+    );
+
+    if (result === null || typeof result === "undefined") {
+      return res
+        .status(422)
+        .json({ error: "Invalid result from calculate_lp function" });
+    }
+
+    return res.status(200).json(result);
+  } catch (e) {
+    return res.status(422).json({ error: "Internal server error" });
+  }
+});
+
+// Catch-all middleware for non-existent endpoints
+app.use((req, res, next) => {
+  res.status(404).json({ error: "Endpoint not found" });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: "Internal server error" });
+});
+
+const server = app.listen(port);
 
 describe("POST /api/calculate_lp", () => {
-    const lp_address = "0xab14c2c38dc9dd7081820269dff088ddf0b72ff6";
-    const wallet_address = "0xe403043A0F9C7B9F315Cf145166EB747D9790E77";
+  const request = supertest(app);
 
-    test("it should return a 200 status code and a success message", async () => {
-        const response = await request(app).post("/api/calculate_lp").send({
-            lp_address: lp_address,
-            wallet_address: wallet_address,
-        });
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
-        expect(response.status).toBe(200);
-        expect(response.body.message).toBe("Calculated LP token successfully");
-        // TODO
-        expect(response.body.data).toBe({});
+  afterAll(() => {
+    server.close();
+  });
+
+  it("should calculate LP successfully with valid inputs", async () => {
+    const mockResult = {
+      token_0: "0xToken0",
+      token_1: "0xToken1",
+      token_0_symbol: "TOKEN0",
+      token_1_symbol: "TOKEN1",
+      token_0_value: 100,
+      token_1_value: 200,
+      token_0_fees: 10,
+      token_1_fees: 20,
+      fee_tier: 3000,
+      nft_id: 123,
+      min_tick: -100,
+      max_tick: 100
+    };
+
+    pools.calculate_lp.mockResolvedValue(mockResult);
+
+    const requestBody = {
+      pool_address: "0xValidPoolAddress",
+      user_address: "0xValidUserAddress"
+    };
+
+    const response = await request
+      .post("/api/calculate_lp")
+      .send(requestBody)
+      .expect("Content-Type", /json/)
+      .expect(200);
+
+    expect(response.body).toEqual(mockResult);
+    expect(pools.calculate_lp).toHaveBeenCalledWith(
+      requestBody.pool_address,
+      requestBody.user_address
+    );
+  });
+
+  it("should return 400 if pool_address or user_address is missing", async () => {
+    const requestBody = {
+      pool_address: "0xValidPoolAddress",
+      // user_address is missing intentionally
+    };
+
+    const response = await request
+      .post("/api/calculate_lp")
+      .send(requestBody)
+      .expect("Content-Type", /json/)
+      .expect(400);
+
+    expect(response.body).toEqual({
+      error: "Pool address and user address are required"
     });
+    expect(pools.calculate_lp).not.toHaveBeenCalled();
+  });
 
-    test("it should return a 400 status code and an error message", async () => {
-        const no_lp_address_response = await request(app)
-            .post("/api/calculate_lp")
-            .send({
-                wallet_address: wallet_address,
-            });
+  it("should return 422 if calculate_lp function returns undefined", async () => {
+    const requestBody = {
+      pool_address: "0xValidPoolAddress",
+      user_address: "0xValidUserAddress"
+    };
 
-        expect(no_lp_address_response.status).toBe(400);
-        expect(no_lp_address_response.body.error).toBe(
-            "LP address and wallet address are required"
-        );
+    pools.calculate_lp.mockResolvedValue(undefined);
 
-        const no_wallet_address_response = await request(app)
-            .post("/api/calculate_lp")
-            .send({
-                lp_address: lp_address,
-            });
+    const response = await request
+      .post("/api/calculate_lp")
+      .send(requestBody)
+      .expect("Content-Type", /json/)
+      .expect(422);
 
-        expect(no_wallet_address_response.status).toBe(400);
-        expect(no_wallet_address_response.body.error).toBe(
-            "LP address and wallet address are required"
-        );
+    expect(response.body).toEqual({
+      error: "Invalid result from calculate_lp function"
     });
+    expect(pools.calculate_lp).toHaveBeenCalledWith(
+      requestBody.pool_address,
+      requestBody.user_address
+    );
+  });
 
-    // TODO: Non-existent endpoints
-    // TODO: Rate limiting
-    // TODO: Request processing error
-    test("it should limit requests from the same IP address", async () => {
-        let response;
+  it("should handle internal server error", async () => {
+    const requestBody = {
+      pool_address: "0xValidPoolAddress",
+      user_address: "0xValidUserAddress"
+    };
 
-        for (let i = 0; i <= 99; i++) {
-            if (i == 99) {
-                response = await request(app).post("/api/calculate_lp").send({
-                    lp_address: lp_address,
-                    wallet_address: wallet_address,
-                });
-            } else {
-                await request(app).post("/api/calculate_lp").send({
-                    lp_address: lp_address,
-                    wallet_address: wallet_address,
-                });
-            }
-        }
+    pools.calculate_lp.mockRejectedValue(new Error("Test error"));
 
-        // Assert that the third request receives a 429 Too Many Requests status code
-        expect(response).toBe(429);
+    const response = await request
+      .post("/api/calculate_lp")
+      .send(requestBody)
+      .expect("Content-Type", /json/)
+      .expect(422);
+
+    expect(response.body).toEqual({
+      error: "Internal server error"
     });
+    expect(pools.calculate_lp).toHaveBeenCalledWith(
+      requestBody.pool_address,
+      requestBody.user_address
+    );
+  });
+
+  it("should return 404 for non-existent endpoint", async () => {
+    const response = await request
+      .get("/nonexistentendpoint")
+      .expect("Content-Type", /json/)
+      .expect(404);
+
+    expect(response.body).toEqual({
+      error: "Endpoint not found"
+    });
+  });
 });

@@ -28,22 +28,18 @@ app.post("/api/calculate_lp", async (req, res) => {
                 .json({ error: "Pool address and user address are required" });
         }
 
-        const calc_result = await liquidity_pool.calculate_lp(
+        const result = await liquidity_pool.calculate_lp(
             pool_address,
             user_address
         );
 
-        // TODO: Debug function calculate_lp
-        console.log("calc: ", await calc_result);
-
-        // Check if calc_result is a valid result
-        if (calc_result === null || typeof calc_result === "undefined") {
+        if (result === null || typeof result === "undefined") {
             return res
                 .status(422)
                 .json({ error: "Invalid result from calculate_lp function" });
         }
 
-        return res.status(200).json(calc_result);
+        return res.status(200).json(result);
     } catch (e) {
         return res.status(422).json({ error: e });
     }
@@ -61,6 +57,4 @@ app.use((err, req, res, next) => {
 });
 
 // Start the server
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-});
+app.listen(port);
