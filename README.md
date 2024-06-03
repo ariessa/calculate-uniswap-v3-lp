@@ -15,6 +15,8 @@
 
 <br />
 
+---
+
 <a name="#how-to-use-this-repo"/>
 
 ## How to use this repo
