@@ -71,7 +71,7 @@
     npm run test
     ```
 
-    <!-- TODO: <img src="/screenshots/test.png"/> -->
+    <img src="/screenshots/test.png"/>
 
     <br />
 
@@ -81,4 +81,4 @@
     npm run test-coverage
     ```
 
-   <!-- TODO: <img src="/screenshots/test-coverage.png"/> -->
+   <img src="/screenshots/test-coverage.png"/>
