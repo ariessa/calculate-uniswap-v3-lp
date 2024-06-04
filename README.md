@@ -92,7 +92,7 @@
 
 ## How things work under the hood
 
-<img src="/screenshots/how-things-work-under-the-hood.png"/>
+<img src="/diagrams/how-things-work-under-the-hood.png"/>
 
 1. Deploy contract `UniswapV3PoolAddresses.sol` on Ethereum Sepolia testnet.
 
