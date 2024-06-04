@@ -101,10 +101,14 @@
     Every time a liquidity pool is created, the contract `UniswapV3Factory.sol` will emit an event called PoolCreated.
 
     - Text signature
+        ```
         PoolCreated(address,address,uint24,int24,address)
+        ```
 
     - Hex signature
+        ```
         0x783cca1c0412dd0d695e784568c96da2e9c22ff989357a2e8b1d9b2b4e6b7118
+        ```
 
 3. Add pool data from `event PoolCreated` into contract `UniswapV3PoolAddresses.sol` on Ethereum Sepolia testnet.
 
