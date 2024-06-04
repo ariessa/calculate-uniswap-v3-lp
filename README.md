@@ -134,17 +134,17 @@
 
     > Not too sure about the maths part 😮‍💨
 
-10. Function `get_position_ids` gets a list of position ids for an address, sort in descending order. Position id is basically the token_id for the `Uniswap V3: Positions NFT`.
+10. Function `get_position_ids` gets a list of position ids for an address, sort in descending order. `position_id` is basically the `token_id` for the `Uniswap V3: Positions NFT`.
 
-    Every time an address creates a new position, the address will get a `Uniswap V3: Positions NFT` that contains the details of their position. Same goes to updating a position.
+    Every time an address creates a new position, the address receives a `Uniswap V3: Positions NFT` that contains the details of their position. Same goes to updating a position.
 
 11. Function `get_position` finds a position that matches the `token_0`, `token_1`, and `fee_tier`.
 
-    Since multiple position ids with matching criteria can exists, only the first match will be considered.
+    Since multiple position ids with matching criteria can exist, only the first match will be considered.
 
 12. Function `get_unclaimed_token_fees` gets the unclaimed fees of both `token_0` and `token_1` by simulating a blockchain transaction using the Contract's method `staticCall` from `ethers v6`.
 
-    > The coding part was easy, but maths aint mathing 😶‍🌫️
+    > The coding part was easy, but the maths aint mathing 😶‍🌫️
 
 13. Function `calculate_lp` returns an object.
 
@@ -166,7 +166,7 @@
         "max_tick": 82020
     }
     ```
-14. The API endpoints responds back with the object from function `calculate_lp`.
+14. The API endpoint responds back with the object from function `calculate_lp`.
 
 <br />
 
@@ -176,7 +176,7 @@
 
 /api/calculate_lp
 
-Sample of sending POST request with a request body using `cURL`
+Sample of sending a POST request with a request body using `cURL`
 
 ```
 curl --location 'http://localhost:4000/api/calculate_lp' \
@@ -193,10 +193,10 @@ curl --location 'http://localhost:4000/api/calculate_lp' \
 
 ### Smart contract
 
-Contract `UniswapV3PoolAddresses` was created using `UniswapV3Pool` and `UniswapV3Factory`. Initially, it was named `UniswapV3LPAddresses`, so the deployed contract name on Sepolia testnet retains the old name. 
+Contract `UniswapV3PoolAddresses` was created using `UniswapV3Pool` and `UniswapV3Factory` as reference. Initially, it was named `UniswapV3LPAddresses`, so the deployed contract name on Sepolia testnet retains the old name. 
 
 - It represents a list of Uniswap V3 liquidity pool contracts that were deployed on Ethereum mainnet.
-- It allows users to add and remove liquidity pool, as well as get the details of a liquidity pool.
+- It allows users to add liquidity pools and get the details of a liquidity pool.
 
 Deployed contract address on Sepolia testnet
 ```

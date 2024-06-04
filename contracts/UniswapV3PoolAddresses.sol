@@ -6,7 +6,7 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 /**
  * @title UniswapV3PoolAddresses
  * @dev This contract represents a list of Uniswap V3 liquidity pool contracts that were deployed on Ethereum mainnet.
- *      It allows users to add and remove liquidity pool, as well as get the details of a liquidity pool.
+ *      It allows users to add liquidity pools and get the details of a liquidity pool.
  */
 contract UniswapV3PoolAddresses is AccessControl {
     /** Struct to represent a liquidity pool */
